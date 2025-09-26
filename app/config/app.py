@@ -16,11 +16,3 @@ class AppConfig(BaseSettings):
         extra='ignore'
     )
 
-    @validator('ENVIRONMENT')
-    def validate_environment(cls, v):
-        try:
-            Environment(v)
-        except ValueError:
-            allowed_envs = [env.value for env in Environment]
-            raise ValueError(f'ENVIRONMENT must be one of {allowed_envs}')
-        return v
