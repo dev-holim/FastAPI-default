@@ -14,4 +14,4 @@ class RDBRepository(Repository):
         if cls.__repo_name__ is None:
             raise AttributeError(f'__repo_name__ was not define in {cls.__name__}')
 
-        return super().__new__(cls)  # TODO: Weird...
+        return super().__new__(cls)

@@ -9,9 +9,6 @@ class RedisConfig(BaseSettings):
     PORT: int = 6379
     PASSWORD: Optional[str] = None
     DB: int = 0
-    MAX_CONNECTIONS: int = 10
-    SOCKET_TIMEOUT: int = 5
-    SOCKET_CONNECT_TIMEOUT: int = 5
 
     model_config = SettingsConfigDict(
         case_sensitive=True,

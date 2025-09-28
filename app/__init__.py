@@ -5,14 +5,14 @@ from fastapi import FastAPI
 from starlette.types import Lifespan
 
 from app.api import include_routers
-# from app.adapter.repository.rdb import init_rdb
-# from app.adapter.repository.cache._uow_ import init_cache
+from app.adapter.repository.rdb import init_rdb
+from app.adapter.repository.cache import init_cache
 from app.security.cors import include_cors_middleware
 
 @asynccontextmanager
 async def lifespan_(app: FastAPI):
-    # await init_rdb()
-    # await init_cache()
+    await init_rdb()
+    await init_cache()
 
     yield
 

@@ -31,4 +31,5 @@ class RDBConfig(BaseSettings):
     @property
     def async_connection_string(self) -> str:
         """비동기 데이터베이스 연결 문자열 생성"""
+        # f'{dbms}+{driver}://{username}:{password}@{host}:{port}/{database}'
         return f"postgresql+asyncpg://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.NAME}"

@@ -1,15 +1,13 @@
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
-from app.config import RDBConfig
-
-PG_Schema = RDBConfig.SCHEMA
+from app.config import settings
 
 class Base(DeclarativeBase):
     ...
 
     __table_args__ = {
-        'schema': PG_Schema
+        'schema': settings.database.SCHEMA,
     }
 
 
