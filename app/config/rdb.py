@@ -8,7 +8,7 @@ class RDBConfig(BaseSettings):
     HOST: str = "localhost"
     PORT: int = 5432
     USER: str = "postgres"
-    NAME: str = "fastapi_db"
+    NAME: str = ""
     PASSWORD: str = Field(..., min_length=1)
     SCHEMA: str = "public"
     POOL_SIZE: int = 10
