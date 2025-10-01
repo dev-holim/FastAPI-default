@@ -2,8 +2,11 @@ from uuid import UUID
 from http import HTTPStatus
 from fastapi import APIRouter, Depends
 
+from app.api.user.schema.reqest import SignUpRequest
+from app.api.user.schema.response import SignUpResponse
 from app.config import get_async_database_url
-from app.core.service import Service, GetMyInformationService
+from app.core.service import Service, AddUserService
+from app.security.auth import Authorization
 
 user_router = APIRouter(
     tags=['User']
@@ -11,19 +14,26 @@ user_router = APIRouter(
 
 @user_router.post('/login')
 async def login_proc(
+    user_id: UUID = Depends(Authorization()),
 ):
-    return get_async_database_url()
+    return user_id
 
-@user_router.get(
-    summary='내 정보 조회',
-    description='사용하고 있는 계정의 정보들을 제공',
-    # response_model=MyInformationResponse,
+
+
+@user_router.post(
+    name="user:register",
+    summary='회원가입',
+    description='회원 가입 프로세스',
+    response_model=SignUpResponse,
     status_code=HTTPStatus.OK,
-    path='/me'
+    path='/sign-up'
 )
 async def get_user_information(
-        # user_id: UUID = Depends(Authorization()),
-        service: Service = Depends(GetMyInformationService)
+    request: SignUpRequest,
+    service: Service = Depends(AddUserService)
 ):
-    user_id = ""
-    return await service(user_id)
+    return await service(
+        name=request.name,
+        email=request.email,
+        password=request.password,
+    )

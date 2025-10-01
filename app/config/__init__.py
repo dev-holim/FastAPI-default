@@ -5,7 +5,7 @@ from .cache import RedisConfig
 from .cors import CORSConfig
 from .environment import env_config, Environment
 from .rdb import RDBConfig
-
+from .jwt import JWTConfig
 
 class Settings:
     """중앙화된 설정 관리 클래스"""
@@ -15,6 +15,7 @@ class Settings:
         self._database_config: Optional[RDBConfig] = None
         self._redis_config: Optional[RedisConfig] = None
         self._cors_config: Optional[CORSConfig] = None
+        self._jwt_config: Optional[JWTConfig] = None
 
     @property
     def app(self) -> AppConfig:
@@ -39,6 +40,12 @@ class Settings:
         if self._cors_config is None:
             self._cors_config = CORSConfig()
         return self._cors_config
+
+    @property
+    def jwt(self) -> JWTConfig:
+        if self._jwt_config is None:
+            self._jwt_config = JWTConfig()
+        return self._jwt_config
 
 
 # 전역 설정 인스턴스

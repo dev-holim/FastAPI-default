@@ -15,3 +15,8 @@ class RDBRepository(Repository):
             raise AttributeError(f'__repo_name__ was not define in {cls.__name__}')
 
         return super().__new__(cls)
+    
+    async def save(self, entity):
+        self.session.add(entity)
+        await self.session.flush()
+        return entity

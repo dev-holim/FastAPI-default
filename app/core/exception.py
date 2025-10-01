@@ -8,6 +8,11 @@ from fastapi import HTTPException
 class ExceptionDetail(str, Enum):
     # User
     USER_NOT_FOUND = 'USER_NOT_FOUND'
+    USER_ALREADY_EXIST = 'USER_ALREADY_EXIST'
+
+    # Token
+    TOKEN_NOT_FOUND = 'TOKEN_NOT_FOUND'
+    INVALID_TOKEN_NO_SUFFIx = 'INVALID_TOKEN_NO_SUFFIx'
 
 
 class DefaultException(HTTPException):
