@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import Depends
 
 from app.abc.repository.base import UoW
@@ -10,7 +12,7 @@ from .._base_ import Service
 from app.core.enums import UserRole
 
 
-class AddUserService(Service):
+class SignInService(Service):
 
     def __init__(
             self,
@@ -21,27 +23,17 @@ class AddUserService(Service):
                     ]
                 )
             ),
-        pm: PasswordManager = Depends(
-            get_password_manager
-        )
     ):
         self.rdb_uow = rdb_uow
-        self.password_manager = pm
 
-    async def __call__(self, name: str, email: str, password: str):
+    async def __call__(self, uid: UUID):
         async with self.rdb_uow.enter() as rdb_uow:
-            if _ := await rdb_uow.user_repository.find_by_email(email):
+            user_ = await rdb_uow.user_repository.find_by_id(uid)
+
+            if user_ is None:
                 raise ALREADY_EXIST_EXCEPTION(
-                    ExceptionDetail.USER_ALREADY_EXIST
+                    ExceptionDetail.USER_NOT_FOUND
                 )
 
-            user_ = await rdb_uow.user_repository.save(
-                User(
-                    name=name,
-                    email=email,
-                    password=self.password_manager.hash(password),
-                    role=UserRole.USER.value
-                )
-            )
 
             return {"id":user_.id}
