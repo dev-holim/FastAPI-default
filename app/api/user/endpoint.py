@@ -3,21 +3,30 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 
 from app.api.user.schema.reqest import SignUpRequest
-from app.api.user.schema.response import SignUpResponse
+from app.api.user.schema.response import SignUpResponse, SignInResponse
 from app.config import get_async_database_url
-from app.core.service import Service, AddUserService
+from app.core.service import Service, AddUserService, SignInService
 from app.security.auth import Authorization
 
 user_router = APIRouter(
     tags=['User']
 )
 
-@user_router.post('/login')
+@user_router.post(
+    name="user:login",
+    summary='로그인',
+    description='로그인 프로세스',
+    response_model=SignInResponse,
+    status_code=HTTPStatus.OK,
+    path='/login'
+)
 async def login_proc(
     user_id: UUID = Depends(Authorization()),
+    service: Service = Depends(SignInService)
 ):
-    return user_id
-
+    return service(
+        uid=user_id
+    )
 
 
 @user_router.post(
