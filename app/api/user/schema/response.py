@@ -8,7 +8,7 @@ class DefaultResponse(BaseModel):
 class SignUpResponse(DefaultResponse):
     ...
 
-class SignInResponse(DefaultResponse):
+class SignInResponse(BaseModel):
     access_token: str
     refresh_token: str
     access_expired_at: float

@@ -10,9 +10,8 @@ from app.abc.client.jwt import JWTEncodeClient, JWTPayload
 
 
 class JWTEncoder(JWTEncodeClient):
-    def __init__(self, config: JWTConfig = settings.jwt):
-        # TODO: setting jwt => prod, stage, develop으로 구성
-        self.config = config
+    def __init__(self):
+        self.config = settings.jwt
 
     def _encode(
         self,

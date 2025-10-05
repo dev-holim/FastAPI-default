@@ -7,9 +7,9 @@ from app.abc.client.jwt import JWTDecodeClient, JWTPayload
 
 
 class JWTDecoder(JWTDecodeClient):
-    def __init__(self, config: JWTConfig = settings.jwt):
+    def __init__(self):
         # TODO: setting jwt => prod, stage, develop으로 구성
-        self.config = config
+        self.config = settings.jwt
 
     def _decode(
         self,

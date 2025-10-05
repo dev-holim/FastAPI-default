@@ -1,38 +1,40 @@
 from typing import Optional, List, Type, Dict, Any, Self, Protocol, runtime_checkable
 
-from redis import StrictRedis
-from redis.client import Pipeline
+from redis.asyncio import Redis
+from redis.asyncio.client import Pipeline
+
 from app.config import settings
 from app.abc.repository.base import UoW
 from app.adapter.repository.cache._base import RedisRepository
 
 class RedisClient:
-    instance: Optional[StrictRedis] = None
+    instance: Optional[Redis] = None
 
     @classmethod
-    def get_instance(cls) -> StrictRedis:
+    def get_instance(cls) -> Redis:
         if cls.instance is None:
             redis_config = settings.redis
             params: Dict[str, Any] = {
                 "host": redis_config.HOST,
                 "port": redis_config.PORT,
-                "db": redis_config.DB
+                "db": redis_config.DB,
             }
             if getattr(redis_config, "PASSWORD", None):
                 params["password"] = redis_config.PASSWORD
+                params["username"] = redis_config.USER
 
-            cls.instance = StrictRedis(**params)
+            cls.instance = Redis(**params)
         return cls.instance
 
 
-def get_redis_client() -> StrictRedis:
+def get_redis_client() -> Redis:
     return RedisClient.get_instance()
 
 class CacheUoW(UoW):
-    __client: Optional[StrictRedis] = None
+    __client: Optional[Redis] = None
 
     @staticmethod
-    def initialize_client(client: StrictRedis) -> None:
+    def initialize_client(client: Redis) -> None:
         CacheUoW.__client = client
 
     def __init__(self, repositories: List[Type[RedisRepository]]):
@@ -40,7 +42,7 @@ class CacheUoW(UoW):
         self._bind_repositories: Dict[str, RedisRepository] = {}
         self._transactional: bool = True
         self._pipeline_kwargs: Dict[str, Any] | None = None
-        self._active_conn: StrictRedis | Pipeline | None = None
+        self._active_conn: Redis | Pipeline | None = None
 
     def enter(self, transactional: bool = True, **pipeline_kwargs) -> Self:
         self._transactional = transactional
@@ -76,9 +78,9 @@ class CacheUoW(UoW):
             try:
                 if exc_type is None:
                     # 정상 종료
-                    pipe.execute()
+                    await pipe.execute()
                 else:
-                    pipe.reset()
+                    await pipe.reset()
             finally:
                 pass
 
