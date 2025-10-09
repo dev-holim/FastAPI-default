@@ -45,36 +45,36 @@ class SignInService(Service):
     async def __call__(self, email: str, password: str):
         return await self.auth_client.login(email, password)
 
-        async with self.rdb_uow.enter() as rdb_uow:
-            user_ = await rdb_uow.user_repository.find_by_email(email)
-
-            if user_ is None:
-                raise ALREADY_EXIST_EXCEPTION(
-                    ExceptionDetail.USER_NOT_FOUND
-                )
-
-            if not self.password_manager.verify(password, user_.password):
-                raise ALREADY_EXIST_EXCEPTION(
-                    ExceptionDetail.USER_PASSWORD_NOT_MATCH
-                )
-
-            access_token, access_expired_at = self.jwt_client.access_token(
-                str(user_.id)
-            )
-
-            refresh_token, refresh_expired_at = self.jwt_client.refresh_token(
-                str(user_.id)
-            )
-
-            async with self.cache_uow.enter() as cache_uow:
-                await cache_uow.user_token_repo.set_user_hash(
-                    str(user_.id),
-                    email
-                )
-
-            return {
-                "access_token":access_token,
-                "access_expired_at":access_expired_at,
-                "refresh_token":refresh_token,
-                "refresh_expired_at":refresh_expired_at
-            }
+        # async with self.rdb_uow.enter() as rdb_uow:
+        #     user_ = await rdb_uow.user_repository.find_by_email(email)
+        #
+        #     if user_ is None:
+        #         raise ALREADY_EXIST_EXCEPTION(
+        #             ExceptionDetail.USER_NOT_FOUND
+        #         )
+        #
+        #     if not self.password_manager.verify(password, user_.password):
+        #         raise ALREADY_EXIST_EXCEPTION(
+        #             ExceptionDetail.USER_PASSWORD_NOT_MATCH
+        #         )
+        #
+        #     access_token, access_expired_at = self.jwt_client.access_token(
+        #         str(user_.id)
+        #     )
+        #
+        #     refresh_token, refresh_expired_at = self.jwt_client.refresh_token(
+        #         str(user_.id)
+        #     )
+        #
+        #     async with self.cache_uow.enter() as cache_uow:
+        #         await cache_uow.user_token_repo.set_user_hash(
+        #             str(user_.id),
+        #             email
+        #         )
+        #
+        #     return {
+        #         "access_token":access_token,
+        #         "access_expired_at":access_expired_at,
+        #         "refresh_token":refresh_token,
+        #         "refresh_expired_at":refresh_expired_at
+        #     }
