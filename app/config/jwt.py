@@ -5,6 +5,7 @@ from .environment import env_config
 
 class JWTConfig(BaseSettings):
     """데이터베이스 설정"""
+    AUTH_HOST: str
     ALGORITHM: str
     ACCESS_TYP: str
     ACCESS_KEY: str

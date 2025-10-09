@@ -1,10 +1,13 @@
-from typing import Optional
+# from typing import Optional
 from uuid import UUID
 
-from fastapi import Cookie, Depends, Header, HTTPException
+from fastapi import Depends
+# from fastapi import Cookie, Depends, Header, HTTPException
 
-from app.abc.client.jwt import JWTPayload
-from app.adapter.client.jwt_decoder import JWTDecoder
+# from app.abc.client.auth import Auth
+# from app.abc.client.jwt import JWTPayload
+from app.adapter.client.auth_client import AuthClient
+# from app.adapter.client.jwt_decoder import JWTDecoder
 from app.core.exception import AUTHENTICATION_ERROR_EXCEPTION, ExceptionDetail
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
@@ -16,17 +19,18 @@ class Authorization:
     def __call__(
             self,
             credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer()), # Authorization: Bearer <JWT>
+            auth_client: AuthClient = Depends(AuthClient)
             # token_cookie: Optional[str] = Cookie(alias='access_token', default=None),
             # token_header: Optional[str] = Header(alias='Authorization', default=None),
-            jwt_decoder: JWTDecoder = Depends(JWTDecoder)
+            # jwt_decoder: JWTDecoder = Depends(JWTDecoder)
     ) -> UUID:
         if not credentials:
             raise AUTHENTICATION_ERROR_EXCEPTION(
                 ExceptionDetail.TOKEN_NOT_FOUND
             )
+        payload = auth_client.verify_token(credentials.credentials)
+        # payload: JWTPayload = jwt_decoder.access_token(
+        #     token=credentials.credentials,
+        # )
 
-        payload: JWTPayload = jwt_decoder.access_token(
-            token=credentials.credentials,
-        )
-
-        return UUID(payload.sub)
+        return UUID(payload.get("sub"))

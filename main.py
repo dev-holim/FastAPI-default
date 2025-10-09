@@ -3,8 +3,8 @@ from app import create_app, lifespan_
 app = create_app(lifespan=lifespan_)
 
 
-@app.get(path='/health')
-async def health_check_api():
+@app.get(path='/health', tags=["Health"])
+async def health_check():
     return {
         'status': 'ok'
     }
