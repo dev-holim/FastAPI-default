@@ -11,7 +11,7 @@ from ._base import Base
 
 
 class User(Base):
-    __tablename__ = 'tbl_user'
+    __tablename__ = 'tb_user'
 
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, index=True, nullable=False)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -46,6 +46,8 @@ class User(Base):
             is_active: bool = True,
             is_approved: bool = False
     ):
+        super().__init__()
+
         self.id = uuid4()
         self.name = name
         self.role = role
